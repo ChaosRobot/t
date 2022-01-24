@@ -1,0 +1,16 @@
+#!/bin/bash
+
+SPLUNK='/opt/splunkforwarder/bin/splunk'
+IPADDR='172.20.240.18'
+FILE='/tmp/forwarder.rpm'
+CONF='/opt/splunkforwarder/etc/system/local'
+#sudo wget -O $FILE 'https://tinyurl.com/ul93nz6'
+sudo curl -L 'https://tinyurl.com/ul93nz6'>forwarder.rpm
+sudo rpm -i forwarder.rpm
+sudo printf "[user_info]\nUSERNAME = admin\nPASSWORD = do6&_i@is8eb">"$CoNF/user-seed.conf"
+sudo printf "[tcpout]\ndefaultGroup=indexer1\ncompressed=true\n\n[tcpout:indexer1]\nserver=$IPADDR:9997">"$CONF/outputs.conf"
+sudo printf "[monitor:///var/log]\ndisabled=0">"$CONF/inputs.conf"
+sudo $SPLUNK start --accept-license
+sudo $SPLUNK enable boot-start
+sudo $SPLUNK restart
+sudo iptables -A OUTPUT -p tcp --dport 9997 -d $IPADDR -j ACCEPT
